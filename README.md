@@ -25,3 +25,7 @@ In Stencyl, export a game with the `cppia` target. Use the following in the `ope
 	
 </section>
 ```
+
+Stencyl-cppia generates its output at `[generated project folder]/Export/cppia/[game name].cppia`. To run the generated .cppia file, copy it into `engine/temp/windows/haxe/cpp/bin`, along with the assets folder and lime-legacy.ndll. Then from a command prompt, run `StencylCppia.exe "[my game].cppia"`.
+
+I still haven't had any luck running the generated output. Not sure if it's because of unimplemented features in cppia or because I haven't configured everything right.
