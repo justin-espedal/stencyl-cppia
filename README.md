@@ -11,7 +11,7 @@ This folder is assumed to be placed in Stencyl/plaf/haxe/lib, and the stencyl en
 
 `tools/list-classes/compile.hxml` to scan `[Stencyl]/plaf/haxe/lib/stencyl` for source files and add them to a list of imports to keep, located at `engine/src/AllStencyl.hx`.
 
-`engine/compile-stencyl-cppia-host.hxml` to pull all of the libraries we use (openfl, lime, hxcpp, actuate, console, polygonal-ds, polygonal-printf, box2d, stencyl) and compile them into an executable in `engine/temp/windows/haxe/cpp`. It also generates a list of classes under `export` which are used to keep client scripts from compiling more than they need to.
+`engine/compile.bat` to pull all of the libraries we use (openfl, lime, hxcpp, actuate, console, polygonal-ds, polygonal-printf, box2d, stencyl) and compile them into an executable in `engine/temp/windows/haxe/cpp`. It also generates a list of classes under `export` which are used to keep client scripts from compiling more than they need to.
 
 `tools/run/compile.hxml` to generate the haxelib's `run.n` script, which is used as a lime target handler for `cppia`.
 
