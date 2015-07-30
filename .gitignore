@@ -3,4 +3,5 @@ apps/**
 cppia-testing/bin/
 engine/src/AllStencyl.hx
 engine/temp/
+export/
 run.n

@@ -38,6 +38,3 @@
 -cpp temp/windows/haxe/cpp
 
 -D HXCPP_DEBUG_LINK
-
--cmd build-stencyl-cppia-host.bat
--cmd export-sources.bat
