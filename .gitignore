@@ -1,0 +1,6 @@
+**.cppia
+apps/**
+cppia-testing/bin/
+engine/src/AllStencyl.hx
+engine/temp/
+run.n
