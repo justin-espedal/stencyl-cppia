@@ -1,0 +1,9 @@
+-main cpp.cppia.Host
+-cp host-classpath
+#--macro keep('top.MyAssets')
+--macro include('top')
+-D scriptable
+-D dll_export=bin/cppia.classes
+#-debug
+-dce no
+-cpp bin/cppia

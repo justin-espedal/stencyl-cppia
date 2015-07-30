@@ -1,0 +1,9 @@
+-cp bin
+-cp client-classpath
+-main Main
+-cpp main.cppia
+-D cppia
+-D NO_PRECOMPILED_HEADERS
+-D debug
+--macro cpp.cppia.HostClasses.exclude()
+#--macro cpp.cppia.HostClasses.include()
