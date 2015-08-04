@@ -36,8 +36,7 @@ class CppiaPlatform extends PlatformTarget {
 		
 		targetDirectory = project.app.path + "/cppia";
 		applicationDirectory = targetDirectory;
-		executablePath = applicationDirectory + project.app.file + ".cppia";
-		
+		executablePath = applicationDirectory + "/" + project.app.file + ".cppia";
 	}
 	
 	
@@ -54,6 +53,9 @@ class CppiaPlatform extends PlatformTarget {
 			type = "final";
 			
 		}
+
+		//XXX: Needs to be debug right now so the output is cppia, and cpp.Object info can be stripped out of it.
+		type = "debug";
 		
 		var hxml = targetDirectory + "/haxe/" + type + ".hxml";
 		
@@ -104,9 +106,10 @@ class CppiaPlatform extends PlatformTarget {
 		if (!project.targetFlags.exists ("static")) {
 			
 			ProcessHelper.runCommand ("", "haxe", haxeArgs);
-			//CPPHelper.compile (project, targetDirectory + "/obj", flags);
-			
-			//FileHelper.copyFile (targetDirectory + "/obj/ApplicationMain" + (project.debug ? "-debug" : "") + ".exe", executablePath);
+			CppiaScriptUtils.removeClass(executablePath, "cpp.Object");
+
+			var stencylCppiaPath = PathHelper.getHaxelib (new Haxelib ("stencyl-cppia"));
+			var commandPath = PathHelper.combine(stencylCppiaPath, "engine/temp/windows/haxe/cpp");
 			
 		} else {
 			
