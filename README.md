@@ -1,13 +1,19 @@
 # stencyl-cppia
 Cppia host for Stencyl games
 
+### Initial References
+
 Based primarily on [acadnme](https://github.com/nmehost/acadnme).
 
 Some example hxml files in the Haxe [unit tests](https://github.com/HaxeFoundation/haxe/tree/development/tests/unit), and part of an [hxml overview](http://matttuttle.com/2015/06/hxml-overview/) by Matt Tuttle.
 
-Right now there are a few .bat files being used that will need to be replaced before everything can be built off of Windows.
+### Status
+
+Right now there are a few .bat files being used that will need to be replaced before everything can be built from a non-Windows computer.
 
 This folder is assumed to be placed in Stencyl/plaf/haxe/lib, and the stencyl engine should be generated there too. Two small edits should be made to the Stencyl source to accommodate cppia, and those are found in the `stencyl edits` folder.
+
+### Building From Source
 
 `tools/list-classes/compile.hxml` to scan `[Stencyl]/plaf/haxe/lib/stencyl` for source files and add them to a list of imports to keep, located at `engine/src/AllStencyl.hx`.
 
@@ -29,5 +35,3 @@ In Stencyl, export a game with the `cppia` target. Use the following in the `ope
 ```
 
 Stencyl-cppia generates its output at `[generated project folder]/Export/cppia/[game name].cppia`. To run the generated .cppia file, copy it into `engine/temp/windows/haxe/cpp/bin`, along with the assets folder and lime-legacy.ndll. Then from a command prompt, run `StencylCppia.exe "[my game].cppia"`.
-
-I still haven't had any luck running the generated output. Not sure if it's because of unimplemented features in cppia or because I haven't configured everything right.
