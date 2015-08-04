@@ -29,7 +29,6 @@
 --remap nme:openfl
 
 -cp src
--cp temp/windows/haxe
 -cp ../../../../extensions/gestures
 
 -D scriptable
