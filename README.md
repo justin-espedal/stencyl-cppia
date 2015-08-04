@@ -23,15 +23,8 @@ At this point, it's possible to run the generated `engine/temp/windows/haxe/cpp/
 
 `tools/run/compile.hxml` to generate the haxelib's `run.n` script, which is used as a lime target handler for `cppia`.
 
-In Stencyl, export a game with the `cppia` target. Use the following in the `openfl settings` field of the advanced project settings.
+In Stencyl, export a game with the `cppia` target and it will run automatically on windows.
 
-```
-<section if="cppia">
-	
-	<target name="cppia" handler="stencyl-cppia" />
-	<haxelib name="stencyl-cppia" />
-	
-</section>
-```
+For other platforms, though assuming windows:
 
 Stencyl-cppia generates its output at `[generated project folder]/Export/cppia/[game name].cppia`. To run the generated .cppia file, copy it into `engine/temp/windows/haxe/cpp/bin`, along with the assets folder and lime-legacy.ndll. Then from a command prompt, run `StencylCppia.exe "[my game].cppia"`.
