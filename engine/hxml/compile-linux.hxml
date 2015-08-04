@@ -1,0 +1,7 @@
+compile-common.hxml
+
+-D HXCPP_M32
+-D linux
+-D desktop
+
+-cpp ../temp/linux

@@ -3,15 +3,11 @@
 -D openfl_legacy
 -D lime-legacy
 -D no_console=1
--D HXCPP_M32
 -D native
 -D openfl-native
 -D lime-native
--D windows
--D desktop
 -D lime-openal
 -D tools=2.0.6
--D no-compilation
 -D lime-opengl
 -D lime-curl
 
@@ -28,12 +24,11 @@
 --remap flash:openfl
 --remap nme:openfl
 
--cp src
--cp ../../../../extensions/gestures
+-cp ../src
+-cp ../../../../../extensions/gestures
 
 -D scriptable
--D dll_export=../export/export_classes.info
+-D dll_export=../../export/export_classes.info
 -dce no
--cpp temp/windows/haxe/cpp
 
 -D HXCPP_DEBUG_LINK

@@ -107,9 +107,6 @@ class CppiaPlatform extends PlatformTarget {
 			
 			ProcessHelper.runCommand ("", "haxe", haxeArgs);
 			CppiaScriptUtils.removeClass(executablePath, "cpp.Object");
-
-			var stencylCppiaPath = PathHelper.getHaxelib (new Haxelib ("stencyl-cppia"));
-			var commandPath = PathHelper.combine(stencylCppiaPath, "engine/temp/windows/haxe/cpp");
 			
 		} else {
 			

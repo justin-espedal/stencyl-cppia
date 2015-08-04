@@ -1,5 +1,6 @@
 **.cppia
 apps/**
+bin/**
 cppia-testing/bin/
 engine/src/AllStencyl.hx
 engine/temp/
