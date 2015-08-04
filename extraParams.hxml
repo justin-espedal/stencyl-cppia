@@ -3,3 +3,4 @@
 -dce no
 -D cppia
 -D no-compilation
+--macro include("scripts")
