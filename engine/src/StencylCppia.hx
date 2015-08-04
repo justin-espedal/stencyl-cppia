@@ -1,13 +1,11 @@
 import AllStencyl;
 import DefaultAssetLibrary;
 
-#if cpp
 import hxcpp.StaticSqlite;
 import hxcpp.StaticMysql;
 import hxcpp.StaticRegexp;
 import hxcpp.StaticStd;
 import hxcpp.StaticZlib;
-#end
 
 @:build(cpp.cppia.HostClasses.include())
 class StencylCppia
@@ -19,7 +17,9 @@ class StencylCppia
 
 	public static function main()
 	{
-		var script = Sys.args()[0];
+		var args = Sys.args();
+		var script = args[0];
+		var wd = args[1];
 		#if (!scriptable && !doc_gen)
 			#error "Please define scriptable to use cppia"
 		#end
@@ -29,6 +29,8 @@ class StencylCppia
 		}
 		else
 		{
+			if(wd != null)
+				Sys.setCwd(wd);
 			var source = sys.io.File.getContent(script);
 			run(source);
 		}
