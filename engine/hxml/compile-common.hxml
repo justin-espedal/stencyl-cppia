@@ -6,10 +6,7 @@
 -D native
 -D openfl-native
 -D lime-native
--D lime-openal
 -D tools=2.0.6
--D lime-opengl
--D lime-curl
 
 -lib openfl
 -lib lime
