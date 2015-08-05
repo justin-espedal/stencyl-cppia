@@ -23,19 +23,26 @@ class RunMain
 			return;
 		}
 		
+		var argsIndex = arguments.indexOf("-args");
+		var genIndex = arguments.indexOf("-gen");
+		var openflIndex = arguments.indexOf("-openfl");
+		
+		var additionalArgs = arguments.slice(argsIndex + 1, genIndex);
+		var openflProjectPath = arguments[genIndex + 1].urlDecode();
+		var openflArgs = arguments.slice(openflIndex + 1);
+		
+		// ---
+
 		var command = arguments[0];
-		var projectPath = arguments[1];
+		var serializedProjectPath = arguments[1];
 		
-		var i = 2;
-		while(arguments[i] != "-args") ++i;
-		var gamePath = arguments[i + 1].urlDecode();
-		try { Sys.setCwd (gamePath); } catch (e:Dynamic) {}
+		try { Sys.setCwd (openflProjectPath); } catch (e:Dynamic) {}
 		trace("Cwd: " + Sys.getCwd());
-		
-		var project:HXProject = Unserializer.run(File.getContent(projectPath));
+
+		var project:HXProject = Unserializer.run(File.getContent(serializedProjectPath));
 		project.templatePaths = [ PathHelper.combine (PathHelper.getHaxelib (new Haxelib ("stencyl-cppia")), "templates") ].concat (project.templatePaths);
 		
 		var platform = new CppiaPlatform(command, project, project.targetFlags);
-		platform.execute([]);
+		platform.execute(additionalArgs);
 	}
 }

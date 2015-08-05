@@ -175,7 +175,17 @@ class CppiaPlatform extends PlatformTarget {
 		
 		context.CPP_DIR = targetDirectory + "/" + project.app.file + ".cppia";
 		context.BUILD_DIR = project.app.path + "/cppia";
-		
+
+		var prefix = null;
+
+		context.HAXE_FLAGS =
+			context.HAXE_FLAGS + "\n" +
+			[
+				for(arg in additionalArguments)
+					if(arg == "-D") arg + " "
+					else            arg + "\n"
+			].join("");
+
 		return context;
 		
 	}
