@@ -1,7 +1,7 @@
 #!/bin/sh
 
 mkdir ../bin
-mkdir ../bin/mac
+mkdir ../bin/mac64
 mkdir ../export
 mkdir ../export/scripts
 

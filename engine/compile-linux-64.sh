@@ -1,7 +1,7 @@
 #!/bin/sh
 
 mkdir ../bin
-mkdir ../bin/linux
+mkdir ../bin/linux64
 mkdir ../export
 mkdir ../export/scripts
 

@@ -1,5 +1,5 @@
 mkdir ..\bin
-mkdir ..\bin\windows
+mkdir ..\bin\windows64
 mkdir ..\export
 mkdir ..\export\scripts
 
