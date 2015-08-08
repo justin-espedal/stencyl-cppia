@@ -47,13 +47,13 @@ class RunMain
 		//Platform info
 
 		var platform = PlatformHelper.hostPlatform;
-		var architecture = PlatformHelper.hostArchitecture;
-
+		var is64 = PlatformHelper.hostArchitecture == Architecture.X64;
+		
 		if(platform == Platform.WINDOWS)
-			architecture = Architecture.X86;
-
-		var platformID = platform + (architecture == Architecture.X64 ? "64" : "");
-		var architectureString = (architecture == Architecture.X64 ? "64" : "32");
+			is64 = false;
+		
+		var platformID = platform + (is64  ? "64" : "");
+		var architectureString = (is64 ? "64" : "32");
 		var platformType = switch(platform) {
 			case WINDOWS | MAC | LINUX:
 				"desktop";

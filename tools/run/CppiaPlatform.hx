@@ -2,23 +2,8 @@ package;
 
 import haxe.io.Path;
 import haxe.Template;
-import lime.project.Icon;
-import lime.tools.helpers.AssetHelper;
-import lime.tools.helpers.CPPHelper;
-import lime.tools.helpers.DeploymentHelper;
-import lime.tools.helpers.FileHelper;
-import lime.tools.helpers.IconHelper;
-import lime.tools.helpers.LogHelper;
-import lime.tools.helpers.NekoHelper;
-import lime.tools.helpers.NodeJSHelper;
-import lime.tools.helpers.PathHelper;
-import lime.tools.helpers.PlatformHelper;
-import lime.tools.helpers.ProcessHelper;
-import lime.project.Asset;
-import lime.project.AssetType;
-import lime.project.Haxelib;
-import lime.project.HXProject;
-import lime.project.PlatformTarget;
+import lime.tools.helpers.*;
+import lime.project.*;
 import sys.io.File;
 import sys.FileSystem;
 
@@ -74,14 +59,32 @@ class CppiaPlatform extends PlatformTarget {
 			
 		}
 		
-		if (!project.targetFlags.exists ("static")) {
+		if (!project.targetFlags.exists ("static"))
+		{
+			var platform = PlatformHelper.hostPlatform;
+			var is64 = PlatformHelper.hostArchitecture == Architecture.X64;
 			
-			for (ndll in project.ndlls) {
-				
-				FileHelper.copyLibrary (project, ndll, "Windows", "", (ndll.haxelib != null && (ndll.haxelib.name == "hxcpp" || ndll.haxelib.name == "hxlibc")) ? ".dll" : ".ndll", applicationDirectory, project.debug);
-				
+			if(platform == Platform.WINDOWS)
+				is64 = false;
+			
+			var platformID = platform + (is64  ? "64" : "");
+			platformID = platformID.substr(0, 1).toUpperCase() + platformID.substr(1);
+			
+			var libExtension = switch(platform) {
+				case WINDOWS:
+					".dll";
+				case MAC:
+					".dylib";
+				case LINUX:
+					".dso";
+				case _:
+					"";
 			}
 			
+			for (ndll in project.ndlls)
+			{
+				FileHelper.copyLibrary (project, ndll, platformID, "", (ndll.haxelib != null && (ndll.haxelib.name == "hxcpp" || ndll.haxelib.name == "hxlibc")) ? libExtension : ".ndll", applicationDirectory, project.debug);
+			}
 		}
 		
 		var icons = project.icons;
@@ -122,22 +125,8 @@ class CppiaPlatform extends PlatformTarget {
 		} else {
 			
 			ProcessHelper.runCommand ("", "haxe", haxeArgs.concat ([ "-D", "static_link" ]));
-			//CPPHelper.compile (project, targetDirectory + "/obj", flags.concat ([ "-Dstatic_link" ]));
-			//CPPHelper.compile (project, targetDirectory + "/obj", flags, "BuildMain.xml");
-			
-			//FileHelper.copyFile (targetDirectory + "/obj/Main" + (project.debug ? "-debug" : "") + ".exe", executablePath);
-			
+
 		}
-		
-		var iconPath = PathHelper.combine (applicationDirectory, "icon.ico");
-		
-		if (IconHelper.createWindowsIcon (icons, iconPath) && PlatformHelper.hostPlatform == WINDOWS) {
-			
-			var templates = [ PathHelper.getHaxelib (new Haxelib ("lime")) + "/templates" ].concat (project.templatePaths);
-			ProcessHelper.runCommand ("", PathHelper.findTemplate (templates, "bin/ReplaceVistaIcon.exe"), [ executablePath, iconPath, "1" ], true, true);
-			
-		}
-		
 	}
 	
 	
@@ -153,9 +142,7 @@ class CppiaPlatform extends PlatformTarget {
 	
 	
 	public override function deploy ():Void {
-		
-		DeploymentHelper.deploy (project, targetFlags, targetDirectory, "Windows");
-		
+
 	}
 	
 	
@@ -203,15 +190,6 @@ class CppiaPlatform extends PlatformTarget {
 	
 	
 	public override function rebuild ():Void {
-		
-		if (project.environment.exists ("VS110COMNTOOLS") && project.environment.exists ("VS100COMNTOOLS")) {
-			
-			project.environment.set ("HXCPP_MSVC", project.environment.get ("VS100COMNTOOLS"));
-			Sys.putEnv ("HXCPP_MSVC", project.environment.get ("VS100COMNTOOLS"));
-			
-		}
-		
-		CPPHelper.rebuild (project, [[ "-Dwindows" ]]);
 		
 	}
 	
