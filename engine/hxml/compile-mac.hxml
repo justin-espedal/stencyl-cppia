@@ -1,7 +1,0 @@
-compile-common.hxml
-
--D HXCPP_M32
--D mac
--D desktop
-
--cpp ../temp/mac

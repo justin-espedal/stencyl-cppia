@@ -1,7 +1,0 @@
-compile-common.hxml
-
--D HXCPP_M64
--D linux
--D desktop
-
--cpp ../temp/linux64

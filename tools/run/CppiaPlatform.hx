@@ -29,6 +29,8 @@ class CppiaPlatform extends PlatformTarget {
 	private var executablePath:String;
 	private var targetType:String = "cppia";
 	
+	public static var hostExecutablePath = "";
+	public static var projectPath = "";
 	
 	public function new (command:String, _project:HXProject, targetFlags:Map <String, String> ) {
 		
@@ -55,7 +57,7 @@ class CppiaPlatform extends PlatformTarget {
 		}
 
 		//XXX: Needs to be debug right now so the output is cppia, and cpp.Object info can be stripped out of it.
-		type = "debug";
+		//type = "debug";
 		
 		var hxml = targetDirectory + "/haxe/" + type + ".hxml";
 		
@@ -105,8 +107,17 @@ class CppiaPlatform extends PlatformTarget {
 		
 		if (!project.targetFlags.exists ("static")) {
 			
-			ProcessHelper.runCommand ("", "haxe", haxeArgs);
-			CppiaScriptUtils.removeClass(executablePath, "cpp.Object");
+			ProcessHelper.runCommand("", "haxe", haxeArgs);
+
+			//CppiaScriptUtils.removeClass(executablePath, "cpp.Object");
+
+			//Right now we take care of the bad link on the hxcpp side
+			
+			/*
+			linkingClass = classes[i];
+			if(strcmp(linkingClass->name.c_str(),"cpp._Object.Object_Impl_") != 0)
+			  classes[i]->link();
+			*/
 			
 		} else {
 			
@@ -207,7 +218,7 @@ class CppiaPlatform extends PlatformTarget {
 	
 	public override function run ():Void {
 		
-		var arguments = additionalArguments.copy ();
+		/*var arguments = additionalArguments.copy ();
 		
 		if (LogHelper.verbose) {
 			
@@ -215,8 +226,12 @@ class CppiaPlatform extends PlatformTarget {
 			
 		}
 		
-		arguments = arguments.concat ([ "-livereload" ]);
-		//ProcessHelper.runCommand (applicationDirectory, Path.withoutDirectory (executablePath), arguments);
+		arguments = arguments.concat ([ "-livereload" ]);*/
+		
+		var scriptFolder = PathHelper.combine(projectPath, targetDirectory);
+		var fullScriptPath = PathHelper.combine(projectPath, executablePath);
+
+		ProcessHelper.runCommand(scriptFolder, hostExecutablePath, [fullScriptPath]);
 		
 	}
 	

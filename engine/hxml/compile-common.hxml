@@ -25,7 +25,6 @@
 -cp ../../../../../extensions/gestures
 
 -D scriptable
--D dll_export=../../export/export_classes.info
 -dce no
 
 -D HXCPP_DEBUG_LINK

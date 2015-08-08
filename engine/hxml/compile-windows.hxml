@@ -1,7 +1,0 @@
-compile-common.hxml
-
--D HXCPP_M32
--D windows
--D desktop
-
--cpp ../temp/windows
