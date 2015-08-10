@@ -16308,11 +16308,10 @@ arg c : int
 inlinevar WIDTH float
 inlinevar HEIGHT int
 var pub s menuItemFormat openfl._legacy.text.TextFormat
-class openfl._legacy.text.TextFormatAlign
-var pub s LEFT String
-var pub s RIGHT String
-var pub s CENTER String
-var pub s JUSTIFY String
+var pub s sizes Array<int>
+var pub s iconSize int
+function pub s getIcon openfl._legacy.display.Bitmap
+arg game : String
 class openfl._legacy.text.TextFormat
 function pub m new void
 arg font ? String

@@ -7,6 +7,7 @@ import openfl.display.*;
 import openfl.events.*;
 import openfl.geom.*;
 import openfl.text.*;
+import openfl.utils.*;
 
 import sys.*;
 import sys.io.*;
@@ -128,8 +129,19 @@ class MenuItem extends Sprite
   public static var menuItemFormat = {
     var format:TextFormat = new TextFormat();
     format.size = 20;
-    format.align = TextFormatAlign.CENTER;
+    //format.align = TextFormatAlign.CENTER;
     format;
+  }
+
+  public static var sizes = [16, 24, 32, 48, 72, 76, 96, 120, 128, 152, 256, 512, 1024];
+
+  public static var iconSize = {
+    var useSize = 16;
+
+    for(curSize in sizes)
+      if(curSize <= HEIGHT)
+        useSize = curSize;
+    useSize;
   }
 
   public var game:String;
@@ -142,14 +154,20 @@ class MenuItem extends Sprite
 
     color(0x888888);
 
+    var icon = getIcon(game);
+    addChild(icon);
+    var iconPad = (HEIGHT - iconSize) / 2;
+    icon.x = iconPad;
+    icon.y = iconPad;
+
     var text:TextField = new TextField();
     text.defaultTextFormat = menuItemFormat;
     text.text = game;
     text.selectable = false;
     addChild(text);
-    text.x = 10;
+    text.x = iconPad * 2 + icon.width + 5;
     text.y = 10;
-    text.width = width - 20;
+    text.width = width - 10 - text.x;
     text.height = height - 20;
 
     addEventListener(MouseEvent.CLICK, onClick);
@@ -157,9 +175,23 @@ class MenuItem extends Sprite
     addEventListener(MouseEvent.ROLL_OUT, onRollOut);
   }
 
+  public static function getIcon(game:String):Bitmap
+  {
+    var path = '${MainMenu.GAMES_GENERATED}/$game/Icon-$iconSize.png';
+    if(!FileSystem.exists(path))
+    {
+      trace('Couldn\'t load icon from path: $path');
+      return new Bitmap(new BitmapData(iconSize, iconSize, false, 0xFFFFFF));
+    }
+
+    var bytes = File.getBytes(path);
+    var bitmapData = BitmapData.loadFromBytes(ByteArray.fromBytes(bytes));
+
+    return new Bitmap(bitmapData);
+  }
+
   private function onClick(event:MouseEvent)
   {
-    //Lib.close();
     var path = PathHelper.standardize(Sys.executablePath(), false).split("/");
     var folder = path.slice(0, path.length - 1).join("/");
     ProcessHelper.runCommand(folder, path.pop(), ['${MainMenu.GAMES_GENERATED}/$game/Export/cppia/$game.cppia']);
