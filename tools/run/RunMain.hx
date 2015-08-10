@@ -131,7 +131,7 @@ class RunMain
 			if(distSetup)
 			{
 				var srcFolder = '$libraryFolder/engine/src';
-				//export('$exportFolder/export_classes.info', "^(class|enum|interface)", '$exportFolder');
+				export('$exportFolder/export_classes.info', "^(class|enum|interface)");
 				FileSystem.createDirectory('$exportFolder/scripts');
 				FileHelper.copyIfNewer('$srcFolder/DefaultAssetLibrary.hx', '$exportFolder/DefaultAssetLibrary.hx');
 				FileHelper.copyIfNewer('$srcFolder/scripts/MyAssets.hx', '$exportFolder/scripts/MyAssets.hx');
@@ -146,7 +146,7 @@ class RunMain
 				platformID = platformID.substr(0, 1).toUpperCase() + platformID.substr(1);
 				var ndllPath = '$limeFolder/legacy/ndll/$platformID/lime-legacy.ndll';
 				var ndllDestPath = '$binFolder/lime-legacy.ndll';
-				
+
 				FileHelper.copyIfNewer(tempBinPath, binPath);
 				FileHelper.copyIfNewer(ndllPath, ndllDestPath);
 				if(PlatformHelper.hostPlatform != Platform.WINDOWS)
@@ -181,77 +181,31 @@ class RunMain
 		}
 	}
 
-	//taken from NME CommandLineTools
-	static public function export(info:String, filter:String, sourceDir:String)
+	//modified from NME CommandLineTools
+	static public function export(info:String, filter:String)
 	{
 		try
 		{
 			var match = filter!="" && filter!=null ?  new EReg(filter,"") : null;
-			var fileMatch = sourceDir!="" && sourceDir!=null ? ~/^file (\S*) ([^\r]*)/ : null;
 
 			var content = File.getContent(info);
 			var result = new Array<String>();
 			var allMatched = true;
-			var sourceCount = 0;
-			var haxeStdPath = Sys.getEnv("HAXE_STD_PATH");
-			var stdFile = "file " + haxeStdPath;
 			for(line in content.split("\n"))
 			{
 				if (match!=null && match.match(line))
 					result.push(line);
 				else
 					allMatched = false;
-
-				if (fileMatch!=null && !line.startsWith(stdFile) && fileMatch.match(line))
-				{
-					var dest = fileMatch.matched(1);
-					if (PathHelper.isAbsolute(dest))
-					{
-						//Log.verbose("Unusual absolute path destination " + dest);
-					}
-					else
-					{
-						var source = unquote(fileMatch.matched(2));
-						FileHelper.copyIfNewer(source, sourceDir + "/" + dest);
-						sourceCount++;
-					}
-				}
 			}
 			if (match!=null && !allMatched)
 			{
 				File.saveBytes(info, haxe.io.Bytes.ofString(result.join("\n")));
-				//Log.verbose("Cleaned export file " + info);
-			}
-
-			if (sourceCount>0)
-			{
-				//Log.verbose('Exported $sourceCount files to $sourceDir');
 			}
 		}
 		catch(e:Dynamic)
 		{
-			//Log.error('Error cleaning export file $info $e');
+			trace('Error cleaning export file $info $e');
 		}
-	}
-
-	public static function unquote(x:String) : String
-	{
-		var result:String = "";
-		while(true)
-		{
-			var slash = x.indexOf("\\");
-			if (slash<0)
-				return result + x;
-			result += x.substr(0,slash);
-			var next = x.substr(slash+1,1);
-			if (next=="n")
-				result += "\n";
-			else if (next=="s")
-				result += " ";
-			else
-				result += next;
-			x = x.substr(slash+2);
-		}
-		return null;
 	}
 }
