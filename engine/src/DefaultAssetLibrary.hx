@@ -10,13 +10,14 @@ class DefaultAssetLibrary extends AssetLibrary
 	public function new()
 	{
 		super();
-		
+
 		cppiaLibrary = Type.resolveClass("CppiaAssetLibrary");
 		pollField = Reflect.field(cppiaLibrary, "__poll");
 	}
-	
+
 	public static function __poll ():Void
 	{
-		Reflect.callMethod(cppiaLibrary, pollField, []);
+		if(pollField != null)
+			Reflect.callMethod(cppiaLibrary, pollField, []);
 	}
 }

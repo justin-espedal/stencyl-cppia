@@ -21,23 +21,37 @@ class StencylCppia
 
 	public static function main()
 	{
-		var args = Sys.args();
-		var script = args[0];
-		
-		var delimiter = Std.int(Math.max(script.lastIndexOf("/"), script.lastIndexOf("\\")));
-		gamePath = script.substring(0, delimiter);
-
 		#if (!scriptable && !doc_gen)
 			#error "Please define scriptable to use cppia"
 		#end
-		if (script==null)
+
+		var args = Sys.args();
+
+		if(args.length == 0)
 		{
-			Sys.println("Usage : Cppia scriptname");
+			MainMenu.display();
 		}
 		else
 		{
-			var source = sys.io.File.getContent(script);
-			run(source);
+			var script = args[0];
+
+			if (script==null)
+			{
+				trace("Usage : Cppia scriptname");
+			}
+			else
+			{
+				runScript(script);
+			}
 		}
+	}
+
+	public static function runScript(script:String)
+	{
+		var delimiter = Std.int(Math.max(script.lastIndexOf("/"), script.lastIndexOf("\\")));
+		gamePath = script.substring(0, delimiter);
+
+		var source = sys.io.File.getContent(script);
+		run(source);
 	}
 }
