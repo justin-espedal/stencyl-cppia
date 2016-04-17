@@ -2,6 +2,7 @@
 apps/**
 bin/**
 cppia-testing/bin/
+engine/hxml/export_classes.info
 engine/src/AllStencyl.hx
 engine/temp/
 export/
