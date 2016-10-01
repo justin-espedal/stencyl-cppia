@@ -2,6 +2,8 @@ package scripts;
 
 import com.stencyl.AssetLoader;
 
+import com.stencyl.models.IdType;
+
 class MyAssets implements AssetLoader
 {
 	//Game
@@ -10,7 +12,7 @@ class MyAssets implements AssetLoader
 	public static var scaleMode:Int;
 	public static var stageWidth:Int;
 	public static var stageHeight:Int;
-	public static var initSceneID:Int;
+	public static var initSceneID:IdType;
 	public static var physicsMode:Int;
 	public static var gameScale:Float;
 	public static var gameImageBase:String;
@@ -49,7 +51,7 @@ class MyAssets implements AssetLoader
 		loader.loadResources;
 	}
 	
-	public function loadScenes(scenesXML:Map<Int,String>):Void
+	public function loadScenes(scenesXML:Map<IdType,String>):Void
 	{
 		loader.loadScenes;
 	}
