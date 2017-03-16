@@ -20,8 +20,11 @@ class MyAssets implements AssetLoader
 
 	//APIs
 	public static var adPositionBottom:Bool;
+	public static var testAds:Bool;
 	public static var whirlID:String;
 	public static var whirlID1:String;
+	public static var ioswhirlID:String;
+	public static var ioswhirlID1:String;
 	public static var cpmstarID:String;
 	public static var newgroundsID:String;
 	public static var newgroundsKey:String;
@@ -37,20 +40,18 @@ class MyAssets implements AssetLoader
 	//Keys
 	public static var androidPublicKey:String;
 
-	private var loader:AssetLoader;
-	
 	public function new()
 	{
-		var loader = Type.createInstance(Type.resolveClass("scripts.CppiaAssets"), []);
+		
 	}
 	
 	public function loadResources(resourceMap:Map<String,Dynamic>):Void
 	{
-		loader.loadResources;
+		
 	}
 	
 	public function loadScenes(scenesXML:Map<Int,String>):Void
 	{
-		loader.loadScenes;
+		
 	}
 }

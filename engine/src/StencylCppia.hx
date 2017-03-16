@@ -1,7 +1,7 @@
 package;
 
 import AllStencyl;
-import DefaultAssetLibrary;
+import ManifestResources;
 
 import hxcpp.StaticSqlite;
 import hxcpp.StaticMysql;
@@ -29,7 +29,7 @@ class StencylCppia
 
 		if(args.length == 0)
 		{
-			MainMenu.display();
+			MainMenu.main();
 		}
 		else
 		{

@@ -112,6 +112,16 @@ class RunMain
 
 			var exportFolder = "";
 
+			if(/*debug*/false)
+			{
+				haxeArgs = haxeArgs.concat([
+					'-D', 'HXCPP_DEBUGGER',
+					'-D', 'openfl-debug',
+					'-D', 'lime-debug',
+					'-D', 'debug'
+				]);
+			}
+
 			if(distSetup)
 			{
 				exportFolder = '$libraryFolder/export';
@@ -133,7 +143,7 @@ class RunMain
 				var srcFolder = '$libraryFolder/engine/src';
 				export('$exportFolder/export_classes.info', "^(class|enum|interface)");
 				FileSystem.createDirectory('$exportFolder/scripts');
-				FileHelper.copyIfNewer('$srcFolder/DefaultAssetLibrary.hx', '$exportFolder/DefaultAssetLibrary.hx');
+				FileHelper.copyIfNewer('$srcFolder/ManifestResources.hx', '$exportFolder/ManifestResources.hx');
 				FileHelper.copyIfNewer('$srcFolder/scripts/MyAssets.hx', '$exportFolder/scripts/MyAssets.hx');
 				FileHelper.copyIfNewer('$srcFolder/scripts/MyScripts.hx', '$exportFolder/scripts/MyScripts.hx');
 			}
@@ -144,8 +154,8 @@ class RunMain
 
 				var limeFolder = PathHelper.standardize(PathHelper.getHaxelib (new Haxelib ("lime")), false);
 				platformID = platformID.substr(0, 1).toUpperCase() + platformID.substr(1);
-				var ndllPath = '$limeFolder/legacy/ndll/$platformID/lime-legacy.ndll';
-				var ndllDestPath = '$binFolder/lime-legacy.ndll';
+				var ndllPath = '$limeFolder/ndll/$platformID/lime.ndll';
+				var ndllDestPath = '$binFolder/lime.ndll';
 
 				FileHelper.copyIfNewer(tempBinPath, binPath);
 				FileHelper.copyIfNewer(ndllPath, ndllDestPath);

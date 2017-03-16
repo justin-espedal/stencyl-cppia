@@ -12,6 +12,10 @@ import openfl.utils.*;
 import sys.*;
 import sys.io.*;
 
+@:access(lime.app.Application)
+@:access(lime.Assets)
+@:access(openfl.display.Stage)
+
 class MainMenu extends Sprite
 {
   public static var GAMES_GENERATED:String;
@@ -19,44 +23,64 @@ class MainMenu extends Sprite
   public static inline var WIDTH = 640;
   public static inline var HEIGHT = 480;
 
-  public static function display()
-  {
-    Lib.create
-    (
-      function ()
-      {
-        var lib = Lib.current;
-  			lib.stage.align = StageAlign.TOP_LEFT;
-  			lib.stage.scaleMode = StageScaleMode.NO_SCALE;
-  			lib.loaderInfo = LoaderInfo.create(null);
-        lib.addChild(new MainMenu());
-  		},
-  		WIDTH, HEIGHT,
-  		65,
-  		0,
-  		Lib.HARDWARE |
-  		Lib.ALLOW_SHADERS |
-  		Lib.VSYNC,
-  		"StencylCppia",
-  		null
-  	);
+  public static function main () {
+    
+    var config:lime.app.Config = {
+      
+      build: "1",
+      company: "Stencyl",
+      file: "MainMenu",
+      fps: 65,
+      name: "StencylCppia",
+      orientation: "landscape",
+      packageName: "com.stencyl.cppiahost",
+      version: "1.1",
+      windows: [
+        
+        {
+          antialiasing: 0,
+          background: 0,
+          borderless: false,
+          depthBuffer: false,
+          display: 0,
+          fullscreen: false,
+          hardware: true,
+          height: HEIGHT,
+          parameters: "{}",
+          resizable: false,
+          stencilBuffer: true,
+          title: "StencylCppia",
+          vsync: true,
+          width: WIDTH,
+          x: null,
+          y: null
+        },
+      ]
+      
+    };
+  
+    var app = new openfl.display.Application ();
+    app.create (config);
+  
+    var mainMenu = new MainMenu();
+    
+    var preloader = new openfl.display.Preloader (null);
+    app.setPreloader (preloader);
+    preloader.onComplete.add (function() {
+      app.window.stage.addChild(mainMenu);
+      mainMenu.init();
+    });
+    preloader.create (config);
+    
+    var result = app.exec ();
+    Sys.exit (result);
   }
 
   private var menu:Menu;
 
-  public function new()
-  {
-    super();
-
-    addEventListener(Event.ADDED_TO_STAGE, init);
-    addEventListener(Event.ENTER_FRAME, onUpdate);
-  }
-
-  private function init(event:Event):Void
+  private function init():Void
 	{
-		removeEventListener(Event.ADDED_TO_STAGE, init);
-
-    var platform = PathHelper.standardize(Sys.getCwd(), false);
+		var platform = PathHelper.standardize(Sys.getCwd(), false);
 
     var parts = platform.split("/");
     parts = parts.slice(0, parts.length - 3);
@@ -85,11 +109,6 @@ class MainMenu extends Sprite
       menu.addMenuItem(new MenuItem(cppiaGame));
     }
 	}
-
-  private function onUpdate(event:Event):Void
-  {
-
-  }
 }
 
 class Menu extends Sprite
@@ -185,14 +204,14 @@ class MenuItem extends Sprite
     }
 
     var bytes = File.getBytes(path);
-    var bitmapData = BitmapData.loadFromBytes(ByteArray.fromBytes(bytes));
+    var bitmapData = BitmapData.fromBytes(bytes);
 
     return new Bitmap(bitmapData);
   }
 
   private function onClick(event:MouseEvent)
   {
-    var path = PathHelper.standardize(Sys.executablePath(), false).split("/");
+    var path = PathHelper.standardize(Sys.programPath(), false).split("/");
     var folder = path.slice(0, path.length - 1).join("/");
     ProcessHelper.runCommand(folder, path.pop(), ['${MainMenu.GAMES_GENERATED}/$game/Export/cppia/$game.cppia']);
   }
