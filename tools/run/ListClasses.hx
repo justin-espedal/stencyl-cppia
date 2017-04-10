@@ -11,13 +11,17 @@ using StringTools;
 
 class ListClasses
 {
-	public static function list(haxelib:String, className:String, ?include:Array<String> = null, ?excludeList:Array<String> = null):String
+	public static function list(haxelib:String, className:String, ?packages:Array<String> = null, ?include:Array<String> = null, ?excludeList:Array<String> = null):String
 	{
 		var librarySource = PathHelper.getHaxelib (new Haxelib (haxelib));
 		var allFiles = [];
 		
-		addHaxeFiles(librarySource, allFiles, []);
-		
+		if(packages == null)
+			addHaxeFiles(librarySource, allFiles, []);
+		else
+			for(packageName in packages)
+				addHaxeFiles(librarySource+"/"+packageName, allFiles, [packageName]);
+
 		//or put this in an "include" macro in host hxml
 		if(include != null)
 			allFiles = allFiles.concat(include);
@@ -59,6 +63,11 @@ class ListClasses
 		}
 	}
 	
+	public static var include = [
+		"Universal",
+		"scripts.MyScripts"
+	];
+
 	public static var exclude = [
 		"com.stencyl.utils.FastIntHash", //compile error
 		"com.stencyl.utils.HashMap", //blank file

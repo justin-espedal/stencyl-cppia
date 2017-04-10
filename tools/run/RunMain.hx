@@ -91,7 +91,7 @@ class RunMain
 		{
 			if(distSetup)
 			{
-				var stencylClassList = ListClasses.list("stencyl", "AllStencyl", ["scripts.MyAssets", "scripts.MyScripts"], ListClasses.exclude);
+				var stencylClassList = ListClasses.list("stencyl", "AllStencyl", ["com"], ListClasses.include, ListClasses.exclude);
 				File.saveContent('$libraryFolder/engine/src/AllStencyl.hx', stencylClassList);
 			}
 
@@ -144,7 +144,6 @@ class RunMain
 				export('$exportFolder/export_classes.info', "^(class|enum|interface)");
 				FileSystem.createDirectory('$exportFolder/scripts');
 				FileHelper.copyIfNewer('$srcFolder/ManifestResources.hx', '$exportFolder/ManifestResources.hx');
-				FileHelper.copyIfNewer('$srcFolder/scripts/MyAssets.hx', '$exportFolder/scripts/MyAssets.hx');
 				FileHelper.copyIfNewer('$srcFolder/scripts/MyScripts.hx', '$exportFolder/scripts/MyScripts.hx');
 			}
 			if(hostSetup)
