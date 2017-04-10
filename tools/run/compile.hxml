@@ -1,4 +1,5 @@
 -main RunMain
 -debug
 -lib lime
+-D disable_cffi
 -neko ../../run.n
