@@ -145,6 +145,7 @@ class RunMain
 				FileSystem.createDirectory('$exportFolder/scripts');
 				FileHelper.copyIfNewer('$srcFolder/ManifestResources.hx', '$exportFolder/ManifestResources.hx');
 				FileHelper.copyIfNewer('$srcFolder/scripts/MyScripts.hx', '$exportFolder/scripts/MyScripts.hx');
+				FileHelper.copyIfNewer('$srcFolder/StencylCppiaScript.hx', '$exportFolder/StencylCppia.hx');
 			}
 			if(hostSetup)
 			{
