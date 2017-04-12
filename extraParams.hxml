@@ -1,4 +1,3 @@
--cp export
 --macro cpp.cppia.HostClasses.exclude()
 -dce no
 -D cppia
