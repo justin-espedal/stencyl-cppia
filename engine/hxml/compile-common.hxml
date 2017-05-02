@@ -11,6 +11,7 @@
 -D lime-vorbis
 -D tools=4.0.0
 -D no_console=1
+-D stencyltools
 
 -lib openfl
 -lib lime
