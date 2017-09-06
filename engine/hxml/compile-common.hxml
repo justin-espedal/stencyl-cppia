@@ -21,6 +21,7 @@
 -lib polygonal-ds
 -lib polygonal-printf
 -lib box2d
+-lib cloner
 -lib stencyl
 
 --remap flash:openfl
