@@ -23,6 +23,7 @@
 -lib box2d
 -lib cloner
 -lib stencyl
+-lib mbs
 
 --remap flash:openfl
 --remap nme:openfl
