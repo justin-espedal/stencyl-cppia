@@ -17,15 +17,12 @@ class RunMain
 	{
 		//build, run, test: test game
 		//setup: compile host
-		//dist-setup: prepare stencyl-cppia library for users.
-		//full-setup: setup + dist-setup
-
+		
 		var arguments = Sys.args();
 		var libraryFolder = PathHelper.standardize(PathHelper.getHaxelib (new Haxelib ("stencyl-cppia")), false);
 		var command = arguments[0];
 
-		var hostSetup = command == "setup" || command == "full-setup";
-		var distSetup = command == "dist-setup" || command == "full-setup";
+		var hostSetup = command == "setup";
 
 		//All generated binaries go into Stencyl Workspace
 
@@ -35,9 +32,23 @@ class RunMain
 			else
 				null;
 
+		var stencylFolder =
+			if(arguments.indexOf("-stencyl-folder") != -1)
+				arguments[arguments.indexOf("-stencyl-folder") + 1].urlDecode()
+			else
+				null;
+
+		var debug = arguments.indexOf("-debug") != -1;
+
+		if(hostSetup && stencylFolder == null)
+		{
+			trace("Must pass -stencyl-folder path/to/stencyl to run setup");
+			return;
+		}
+
 		if(workspace == null)
 		{
-			if(hostSetup || distSetup)
+			if(hostSetup)
 			{
 				workspace = Sys.args().pop();
 				trace('Used $command, so using userDir as workspace.');
@@ -59,7 +70,9 @@ class RunMain
 		if(platform == Platform.WINDOWS)
 			is64 = false;
 
-		var platformID = platform + (is64  ? "64" : "");
+		var basePlatformID = platform + (is64  ? "64" : "");
+		var platformID = basePlatformID + (debug ? "-debug" : "");
+
 		var architectureString = (is64 ? "64" : "32");
 		var platformType = switch(platform) {
 			case WINDOWS | MAC | LINUX:
@@ -87,14 +100,11 @@ class RunMain
 
 		hostSetup = hostSetup || !hasBin;
 
-		if(hostSetup || distSetup)
+		if(hostSetup)
 		{
-			if(distSetup)
-			{
-				var stencylClassList = ListClasses.list("stencyl", "AllStencyl", ["com"], ListClasses.include, ListClasses.exclude);
-				File.saveContent('$libraryFolder/engine/src/AllStencyl.hx', stencylClassList);
-			}
-
+			var stencylClassList = ListClasses.list("stencyl", "AllStencyl", ["com"], ListClasses.include, ListClasses.exclude);
+			File.saveContent('$libraryFolder/engine/src/AllStencyl.hx', stencylClassList);
+			
 			var tempFolder = '$cppiaFolder/temp/$platformID';
 			FileSystem.createDirectory(tempFolder);
 
@@ -106,62 +116,53 @@ class RunMain
 				'-D', '$platform',
 				'-D', '$platformType',
 
+				'-cp', '$stencylFolder/plaf/haxe/extensions/gestures',
+
 				'-cpp', '$tempFolder'
-			];
-			var originalHaxeArgs = haxeArgs;
-
-			var exportFolder = "";
-
-			if(/*debug*/false)
+			];			
+			if(debug)
 			{
 				haxeArgs = haxeArgs.concat([
-					'-D', 'HXCPP_DEBUGGER',
-					'-D', 'openfl-debug',
-					'-D', 'lime-debug',
+				//	'-D', 'HXCPP_DEBUGGER',
+				//	'-D', 'openfl-debug',
+				//	'-D', 'lime-debug',
 					'-D', 'debug'
 				]);
 			}
 
-			if(distSetup)
-			{
-				exportFolder = '$libraryFolder/export';
-				FileSystem.createDirectory(exportFolder);
+			var originalHaxeArgs = haxeArgs;
 
-				haxeArgs = haxeArgs.concat([
-					'-D', 'dll_export=$exportFolder/export_classes.info',
-					'-D', 'no-compilation'
-				]);
-			}
+			var exportFolder = '$libraryFolder/export';
+			FileSystem.createDirectory(exportFolder);
 
+			haxeArgs = haxeArgs.concat([
+				'-D', 'dll_export=$exportFolder/export_classes.info',
+				'-D', 'no-compilation'
+			]);
+			
 			try { Sys.setCwd ('$libraryFolder/engine/hxml'); } catch (e:Dynamic) {}
 			ProcessHelper.runCommand ("", "haxe", haxeArgs);
-			if(distSetup && hostSetup)
-				ProcessHelper.runCommand ("", "haxe", originalHaxeArgs);
+			ProcessHelper.runCommand ("", "haxe", originalHaxeArgs);
+			
+			var srcFolder = '$libraryFolder/engine/src';
+			export('$exportFolder/export_classes.info', "^(class|enum|interface)");
+			FileSystem.createDirectory('$exportFolder/scripts');
+			FileHelper.copyIfNewer('$srcFolder/ManifestResources.hx', '$exportFolder/ManifestResources.hx');
+			FileHelper.copyIfNewer('$srcFolder/scripts/MyScripts.hx', '$exportFolder/scripts/MyScripts.hx');
+			FileHelper.copyIfNewer('$srcFolder/StencylCppiaScript.hx', '$exportFolder/StencylCppia.hx');
+			
+			var tempBinPath = '$tempFolder/StencylCppia$binSuffix';
+			var binPath = '$binFolder/StencylCppia$binSuffix';
 
-			if(distSetup)
-			{
-				var srcFolder = '$libraryFolder/engine/src';
-				export('$exportFolder/export_classes.info', "^(class|enum|interface)");
-				FileSystem.createDirectory('$exportFolder/scripts');
-				FileHelper.copyIfNewer('$srcFolder/ManifestResources.hx', '$exportFolder/ManifestResources.hx');
-				FileHelper.copyIfNewer('$srcFolder/scripts/MyScripts.hx', '$exportFolder/scripts/MyScripts.hx');
-				FileHelper.copyIfNewer('$srcFolder/StencylCppiaScript.hx', '$exportFolder/StencylCppia.hx');
-			}
-			if(hostSetup)
-			{
-				var tempBinPath = '$tempFolder/StencylCppia$binSuffix';
-				var binPath = '$binFolder/StencylCppia$binSuffix';
+			var limeFolder = PathHelper.standardize(PathHelper.getHaxelib (new Haxelib ("lime")), false);
+			platformID = basePlatformID.substr(0, 1).toUpperCase() + basePlatformID.substr(1);
+			var ndllPath = '$limeFolder/ndll/$platformID/lime.ndll';
+			var ndllDestPath = '$binFolder/lime.ndll';
 
-				var limeFolder = PathHelper.standardize(PathHelper.getHaxelib (new Haxelib ("lime")), false);
-				platformID = platformID.substr(0, 1).toUpperCase() + platformID.substr(1);
-				var ndllPath = '$limeFolder/ndll/$platformID/lime.ndll';
-				var ndllDestPath = '$binFolder/lime.ndll';
-
-				FileHelper.copyIfNewer(tempBinPath, binPath);
-				FileHelper.copyIfNewer(ndllPath, ndllDestPath);
-				if(PlatformHelper.hostPlatform != Platform.WINDOWS)
-					ProcessHelper.runCommand("", "chmod", ["755", binPath]);
-			}
+			FileHelper.copyIfNewer(tempBinPath, binPath);
+			FileHelper.copyIfNewer(ndllPath, ndllDestPath);
+			if(PlatformHelper.hostPlatform != Platform.WINDOWS)
+				ProcessHelper.runCommand("", "chmod", ["755", binPath]);
 		}
 
 		if(command == "test" || command == "build" || command == "run")
