@@ -19,22 +19,26 @@ class RunMain
 		//setup: compile host
 		
 		var arguments = Sys.args();
-		var libraryFolder = PathHelper.standardize(PathHelper.getHaxelib (new Haxelib ("stencyl-cppia")), false);
+
+		trace(Sys.args());
+
+		//XXX: https://github.com/HaxeFoundation/haxe/issues/5708
+		var thisPath = Sys.executablePath();
+
+		var libraryFolder = PathHelper.standardize(thisPath.substring(0, thisPath.indexOf("run.exe")), false);
+		var cppiaFolder = libraryFolder.substring(0, libraryFolder.lastIndexOf("/lib"));
+		
+		trace('cppiaFolder: $cppiaFolder');
+
 		var command = arguments[0];
 
 		var hostSetup = command == "setup";
 
 		//All generated binaries go into Stencyl Workspace
 
-		var workspace =
-			if(arguments.indexOf("-stencyl-workspace") != -1)
-				arguments[arguments.indexOf("-stencyl-workspace") + 1].urlDecode()
-			else
-				null;
-
 		var stencylFolder =
 			if(arguments.indexOf("-stencyl-folder") != -1)
-				arguments[arguments.indexOf("-stencyl-folder") + 1].urlDecode()
+				arguments[arguments.indexOf("-stencyl-folder") + 1]
 			else
 				null;
 
@@ -45,22 +49,6 @@ class RunMain
 			trace("Must pass -stencyl-folder path/to/stencyl to run setup");
 			return;
 		}
-
-		if(workspace == null)
-		{
-			if(hostSetup)
-			{
-				workspace = Sys.args().pop();
-				trace('Used $command, so using userDir as workspace.');
-			}
-			else
-			{
-				trace("Must pass -stencyl-workspace path/to/stencylworks to run stencyl-cppia");
-				return;
-			}
-		}
-
-		trace('workspace: $workspace');
 
 		//Platform info
 
@@ -84,9 +72,6 @@ class RunMain
 		}
 
 		//Binary locations
-
-		var cppiaFolder = PathHelper.combine(workspace, "cppia");
-		FileSystem.createDirectory(cppiaFolder);
 
 		var binFolder = '$cppiaFolder/bin/$platformID';
 		FileSystem.createDirectory(binFolder);
