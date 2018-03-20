@@ -12,6 +12,7 @@
 -D tools=4.0.0
 -D no_console=1
 -D stencyltools
+-D use_tilemap
 
 -lib openfl
 -lib lime
