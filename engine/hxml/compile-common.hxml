@@ -9,16 +9,19 @@
 -D lime-opengl
 -D lime-openal
 -D lime-vorbis
--D tools=4.0.0
+-D tools=6.3.0
 -D no_console=1
 -D stencyltools
 -D use_tilemap
+-D actuate_manual_time
+-D actuate_manual_update
 
 -lib openfl
 -lib lime
 -lib hxcpp
 -lib actuate
 -lib console
+-lib hscript
 -lib polygonal-ds
 -lib polygonal-printf
 -lib box2d
