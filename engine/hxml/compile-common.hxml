@@ -21,7 +21,6 @@
 -lib hxcpp
 -lib actuate
 -lib console
--lib hscript
 -lib polygonal-ds
 -lib polygonal-printf
 -lib box2d
