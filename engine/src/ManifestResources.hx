@@ -1,6 +1,5 @@
 package;
 
-import lime.app.Config;
 import lime.utils.AssetLibrary;
 import lime.utils.AssetManifest;
 import lime.utils.Assets;
@@ -13,7 +12,7 @@ import sys.FileSystem;
 	public static var preloadLibraries:Array<AssetLibrary>;
 	public static var preloadLibraryNames:Array<String>;
 	
-	public static function init (config:Config):Void {
+	public static function init (config:Dynamic):Void {
 		
 		preloadLibraries = new Array ();
 		preloadLibraryNames = new Array ();

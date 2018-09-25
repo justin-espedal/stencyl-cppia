@@ -1,10 +1,11 @@
 package;
 
 import haxe.Unserializer;
+import hxp.*;
 import sys.*;
 import sys.io.*;
 
-import lime.tools.helpers.*;
+import lime.tools.*;
 import lime.project.*;
 //import lime.utils.Log;
 
@@ -25,7 +26,7 @@ class RunMain
 		//XXX: https://github.com/HaxeFoundation/haxe/issues/5708
 		var thisPath = Sys.executablePath();
 
-		var libraryFolder = PathHelper.standardize(thisPath.substring(0, thisPath.indexOf("run.exe")), false);
+		var libraryFolder = Path.standardize(thisPath.substring(0, thisPath.indexOf("run.exe")), false);
 		var cppiaFolder = libraryFolder.substring(0, libraryFolder.lastIndexOf("/lib"));
 		
 		trace('cppiaFolder: $cppiaFolder');
@@ -52,31 +53,24 @@ class RunMain
 
 		//Platform info
 
-		var platform = PlatformHelper.hostPlatform;
-		var is64 = PlatformHelper.hostArchitecture == Architecture.X64;
+		var platform = System.hostPlatform;
+		var is64 = System.hostArchitecture == HostArchitecture.X64;
 
-		if(platform == Platform.WINDOWS)
+		if(platform == HostPlatform.WINDOWS)
 			is64 = false;
 
 		var basePlatformID = platform + (is64  ? "64" : "");
 		var platformID = basePlatformID + (debug ? "-debug" : "");
 
 		var architectureString = (is64 ? "64" : "32");
-		var platformType = switch(platform) {
-			case WINDOWS | MAC | LINUX:
-				"desktop";
-			case ANDROID | IOS:
-				"mobile";
-			case _:
-				"";
-		}
+		var platformType = "desktop";
 
 		//Binary locations
 
 		var binFolder = '$cppiaFolder/bin/$platformID';
 		FileSystem.createDirectory(binFolder);
 
-		var binSuffix = (platform == Platform.WINDOWS ? ".exe" : "");
+		var binSuffix = (platform == HostPlatform.WINDOWS ? ".exe" : "");
 		var hasBin = FileSystem.exists('$binFolder/StencylCppia$binSuffix');
 
 		CppiaPlatform.hostExecutablePath = '$binFolder/StencylCppia$binSuffix';
@@ -126,28 +120,28 @@ class RunMain
 			]);
 			
 			try { Sys.setCwd ('$libraryFolder/engine/hxml'); } catch (e:Dynamic) {}
-			ProcessHelper.runCommand ("", "haxe", haxeArgs);
-			ProcessHelper.runCommand ("", "haxe", originalHaxeArgs);
+			System.runCommand ("", "haxe", haxeArgs);
+			System.runCommand ("", "haxe", originalHaxeArgs);
 			
 			var srcFolder = '$libraryFolder/engine/src';
 			export('$exportFolder/export_classes.info', "^(class|enum|interface)");
 			FileSystem.createDirectory('$exportFolder/scripts');
-			FileHelper.copyIfNewer('$srcFolder/ManifestResources.hx', '$exportFolder/ManifestResources.hx');
-			FileHelper.copyIfNewer('$srcFolder/scripts/MyScripts.hx', '$exportFolder/scripts/MyScripts.hx');
-			FileHelper.copyIfNewer('$srcFolder/StencylCppiaScript.hx', '$exportFolder/StencylCppia.hx');
+			System.copyIfNewer('$srcFolder/ManifestResources.hx', '$exportFolder/ManifestResources.hx');
+			System.copyIfNewer('$srcFolder/scripts/MyScripts.hx', '$exportFolder/scripts/MyScripts.hx');
+			System.copyIfNewer('$srcFolder/StencylCppiaScript.hx', '$exportFolder/StencylCppia.hx');
 			
 			var tempBinPath = '$tempFolder/StencylCppia$binSuffix';
 			var binPath = '$binFolder/StencylCppia$binSuffix';
 
-			var limeFolder = PathHelper.standardize(PathHelper.getHaxelib (new Haxelib ("lime")), false);
+			var limeFolder = Path.standardize(Haxelib.getPath (new Haxelib ("lime")), false);
 			platformID = basePlatformID.substr(0, 1).toUpperCase() + basePlatformID.substr(1);
 			var ndllPath = '$limeFolder/ndll/$platformID/lime.ndll';
 			var ndllDestPath = '$binFolder/lime.ndll';
 
-			FileHelper.copyIfNewer(tempBinPath, binPath);
-			FileHelper.copyIfNewer(ndllPath, ndllDestPath);
-			if(PlatformHelper.hostPlatform != Platform.WINDOWS)
-				ProcessHelper.runCommand("", "chmod", ["755", binPath]);
+			System.copyIfNewer(tempBinPath, binPath);
+			System.copyIfNewer(ndllPath, ndllDestPath);
+			if(System.hostPlatform != HostPlatform.WINDOWS)
+				System.runCommand("", "chmod", ["755", binPath]);
 		}
 
 		if(command == "test" || command == "build" || command == "run")
@@ -170,7 +164,7 @@ class RunMain
 			trace("Cwd: " + Sys.getCwd());
 
 			var project:HXProject = Unserializer.run(File.getContent(serializedProjectPath));
-			project.templatePaths = [ PathHelper.combine (libraryFolder, "templates") ].concat (project.templatePaths);
+			project.templatePaths = [ Path.combine (libraryFolder, "templates") ].concat (project.templatePaths);
 
 			var builder = new CppiaPlatform(command, project, project.targetFlags);
 			builder.execute(additionalArgs);

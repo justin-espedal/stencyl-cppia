@@ -1,5 +1,6 @@
 -main RunMain
 -debug
+-lib hxp
 -lib lime
 -D disable_cffi
 -neko ../../run.n

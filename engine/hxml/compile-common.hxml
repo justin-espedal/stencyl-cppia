@@ -18,6 +18,7 @@
 
 -lib openfl
 -lib lime
+-lib hxp
 -lib hxcpp
 -lib actuate
 -lib console

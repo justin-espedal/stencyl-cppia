@@ -1,8 +1,8 @@
 package;
 
-import haxe.io.Path;
 import haxe.Template;
-import lime.tools.helpers.*;
+import hxp.*;
+import lime.tools.*;
 import lime.project.*;
 import sys.io.File;
 import sys.FileSystem;
@@ -46,14 +46,14 @@ class CppiaPlatform extends PlatformTarget {
 		
 		var hxml = targetDirectory + "/haxe/" + type + ".hxml";
 		
-		PathHelper.mkdir (targetDirectory);
+		System.mkdir (targetDirectory);
 		
 		for (dependency in project.dependencies) {
 			
 			if (StringTools.endsWith (dependency.path, ".dll")) {
 				
 				var fileName = Path.withoutDirectory (dependency.path);
-				FileHelper.copyIfNewer (dependency.path, applicationDirectory + "/" + fileName);
+				System.copyIfNewer (dependency.path, applicationDirectory + "/" + fileName);
 				
 			}
 			
@@ -61,10 +61,10 @@ class CppiaPlatform extends PlatformTarget {
 		
 		if (!project.targetFlags.exists ("static"))
 		{
-			var platform = PlatformHelper.hostPlatform;
-			var is64 = PlatformHelper.hostArchitecture == Architecture.X64;
+			var platform = System.hostPlatform;
+			var is64 = System.hostArchitecture == HostArchitecture.X64;
 			
-			if(platform == Platform.WINDOWS)
+			if(platform == HostPlatform.WINDOWS)
 				is64 = false;
 			
 			var platformID = platform + (is64  ? "64" : "");
@@ -83,7 +83,7 @@ class CppiaPlatform extends PlatformTarget {
 			
 			for (ndll in project.ndlls)
 			{
-				FileHelper.copyLibrary (project, ndll, platformID, "", (ndll.haxelib != null && (ndll.haxelib.name == "hxcpp" || ndll.haxelib.name == "hxlibc")) ? libExtension : ".ndll", applicationDirectory, project.debug);
+				ProjectHelper.copyLibrary (project, ndll, platformID, "", (ndll.haxelib != null && (ndll.haxelib.name == "hxcpp" || ndll.haxelib.name == "hxlibc")) ? libExtension : ".ndll", applicationDirectory, project.debug);
 			}
 		}
 		
@@ -91,11 +91,11 @@ class CppiaPlatform extends PlatformTarget {
 		
 		if (icons.length == 0) {
 			
-			icons = [ new Icon (PathHelper.findTemplate (project.templatePaths, "default/icon.svg")) ];
+			icons = [ new Icon (System.findTemplate (project.templatePaths, "default/icon.svg")) ];
 			
 		}
 		
-		//IconHelper.createIcon (project.icons, 32, 32, PathHelper.combine (applicationDirectory, "icon.png"));
+		//IconHelper.createIcon (project.icons, 32, 32, Path.combine (applicationDirectory, "icon.png"));
 		
 		var haxeArgs = [ hxml ];
 		var flags = [];
@@ -110,7 +110,7 @@ class CppiaPlatform extends PlatformTarget {
 		
 		if (!project.targetFlags.exists ("static")) {
 			
-			ProcessHelper.runCommand("", "haxe", haxeArgs);
+			System.runCommand("", "haxe", haxeArgs);
 
 			//CppiaScriptUtils.removeClass(executablePath, "cpp.Object");
 
@@ -124,7 +124,7 @@ class CppiaPlatform extends PlatformTarget {
 			
 		} else {
 			
-			ProcessHelper.runCommand ("", "haxe", haxeArgs.concat ([ "-D", "static_link" ]));
+			System.runCommand ("", "haxe", haxeArgs.concat ([ "-D", "static_link" ]));
 
 		}
 	}
@@ -134,7 +134,7 @@ class CppiaPlatform extends PlatformTarget {
 		
 		if (FileSystem.exists (targetDirectory)) {
 			
-			PathHelper.removeDirectory (targetDirectory);
+			System.removeDirectory (targetDirectory);
 			
 		}
 		
@@ -160,7 +160,7 @@ class CppiaPlatform extends PlatformTarget {
 			
 		}
 		
-		var hxml = PathHelper.findTemplate (project.templatePaths, targetType + "/hxml/" + type + ".hxml");
+		var hxml = System.findTemplate (project.templatePaths, targetType + "/hxml/" + type + ".hxml");
 		var template = new Template (File.getContent (hxml));
 		Sys.println (template.execute (generateContext ()));
 		
@@ -206,10 +206,10 @@ class CppiaPlatform extends PlatformTarget {
 		
 		arguments = arguments.concat ([ "-livereload" ]);*/
 		
-		var scriptFolder = PathHelper.combine(projectPath, targetDirectory);
-		var fullScriptPath = PathHelper.combine(projectPath, executablePath);
+		var scriptFolder = Path.combine(projectPath, targetDirectory);
+		var fullScriptPath = Path.combine(projectPath, executablePath);
 
-		ProcessHelper.runCommand(scriptFolder, hostExecutablePath, [fullScriptPath]);
+		System.runCommand(scriptFolder, hostExecutablePath, [fullScriptPath]);
 		
 	}
 	
@@ -234,7 +234,7 @@ class CppiaPlatform extends PlatformTarget {
 				
 				if (ndll.path == null || ndll.path == "") {
 					
-					context.ndlls[i].path = PathHelper.getLibraryPath (ndll, "Windows", "lib", ".lib", project.debug);
+					context.ndlls[i].path = NDLL.getLibraryPath (ndll, "Windows", "lib", ".lib", project.debug);
 					
 				}
 				
@@ -242,21 +242,21 @@ class CppiaPlatform extends PlatformTarget {
 			
 		}
 		
-		PathHelper.mkdir (targetDirectory);
-		PathHelper.mkdir (targetDirectory + "/haxe");
+		System.mkdir (targetDirectory);
+		System.mkdir (targetDirectory + "/haxe");
 		
 		//SWFHelper.generateSWFClasses (project, targetDirectory + "/haxe");
 		
-		FileHelper.recursiveCopyTemplate (project.templatePaths, "haxe", targetDirectory + "/haxe", context);
-		FileHelper.recursiveCopyTemplate (project.templatePaths, targetType + "/hxml", targetDirectory + "/haxe", context);
+		System.recursiveCopyTemplate (project.templatePaths, "haxe", targetDirectory + "/haxe", context);
+		System.recursiveCopyTemplate (project.templatePaths, targetType + "/hxml", targetDirectory + "/haxe", context);
 		
 		if (project.targetFlags.exists ("static")) {
 			
-			FileHelper.recursiveCopyTemplate (project.templatePaths, "cpp/static", targetDirectory + "/obj", context);
+			System.recursiveCopyTemplate (project.templatePaths, "cpp/static", targetDirectory + "/obj", context);
 			
 		}
 		
-		/*if (IconHelper.createIcon (project.icons, 32, 32, PathHelper.combine (applicationDirectory, "icon.png"))) {
+		/*if (IconHelper.createIcon (project.icons, 32, 32, Path.combine (applicationDirectory, "icon.png"))) {
 			
 			context.HAS_ICON = true;
 			context.WIN_ICON = "icon.png";
@@ -267,17 +267,17 @@ class CppiaPlatform extends PlatformTarget {
 			
 			if (asset.embed != true) {
 				
-				var path = PathHelper.combine (applicationDirectory, asset.targetPath);
+				var path = Path.combine (applicationDirectory, asset.targetPath);
 				
 				if (asset.type != AssetType.TEMPLATE) {
 					
-					PathHelper.mkdir (Path.directory (path));
-					FileHelper.copyAssetIfNewer (asset, path);
+					System.mkdir (Path.directory (path));
+					AssetHelper.copyAssetIfNewer (asset, path);
 					
 				} else {
 					
-					PathHelper.mkdir (Path.directory (path));
-					FileHelper.copyAsset (asset, path, context);
+					System.mkdir (Path.directory (path));
+					AssetHelper.copyAsset (asset, path, context);
 					
 				}
 				
@@ -285,7 +285,7 @@ class CppiaPlatform extends PlatformTarget {
 			
 		}
 		
-		AssetHelper.createManifest (project, PathHelper.combine (applicationDirectory, "manifest"));
+		AssetHelper.createManifest (project, Path.combine (applicationDirectory, "manifest"));
 		
 	}
 	

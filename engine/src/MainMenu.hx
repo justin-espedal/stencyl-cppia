@@ -1,6 +1,7 @@
 package;
 
-import lime.tools.helpers.*;
+import hxp.*;
+import lime.tools.*;
 
 import openfl.Lib;
 import openfl.display.*;
@@ -25,7 +26,7 @@ class MainMenu extends Sprite
 
   public static function main () {
     
-    var config:lime.app.Config = {
+    var config = {
       
       build: "1",
       company: "Stencyl",
@@ -46,7 +47,7 @@ class MainMenu extends Sprite
           fullscreen: false,
           hardware: true,
           height: HEIGHT,
-          parameters: "{}",
+          parameters: {},
           resizable: false,
           stencilBuffer: true,
           title: "StencylCppia",
@@ -60,17 +61,85 @@ class MainMenu extends Sprite
     };
   
     var app = new openfl.display.Application ();
-    app.create (config);
-  
+    
+    app.meta["build"] = "1";
+    app.meta["company"] = "Stencyl";
+    app.meta["file"] = "MainMenu";
+    app.meta["name"] = "StencylCppia";
+    app.meta["packageName"] = "com.stencyl.cppiahost";
+    
+    var attributes:lime.ui.WindowAttributes = {
+      
+      allowHighDPI: false,
+      alwaysOnTop: false,
+      borderless: false,
+      element: null,
+      frameRate: 65,
+      fullscreen: false,
+      height: HEIGHT,
+      hidden: false,
+      maximized: false,
+      minimized: false,
+      parameters: {},
+      resizable: false,
+      title: "StencylCppia",
+      width: WIDTH,
+      x: null,
+      y: null,
+      
+    };
+    
+    attributes.context = {
+      
+      antialiasing: 0,
+      background: 0,
+      colorDepth: 32,
+      depth: true,
+      hardware: true,
+      stencil: true,
+      type: null,
+      vsync: true
+      
+    };
+    
+    if (app.window == null) {
+      
+      if (config != null) {
+        
+        for (field in Reflect.fields (config)) {
+          
+          if (Reflect.hasField (attributes, field)) {
+            
+            Reflect.setField (attributes, field, Reflect.field (config, field));
+            
+          } else if (Reflect.hasField (attributes.context, field)) {
+            
+            Reflect.setField (attributes.context, field, Reflect.field (config, field));
+            
+          }
+          
+        }
+        
+      }
+      
+    }
+    
+    app.createWindow (attributes);
+    
     var mainMenu = new MainMenu();
     
     var preloader = new openfl.display.Preloader (null);
-    app.setPreloader (preloader);
     preloader.onComplete.add (function() {
       app.window.stage.addChild(mainMenu);
       mainMenu.init();
     });
-    preloader.create (config);
+    
+    app.preloader.onProgress.add (function (loaded, total) {
+      @:privateAccess preloader.update (loaded, total);
+    });
+    app.preloader.onComplete.add (function () {
+      @:privateAccess preloader.start ();
+    });
     
     var result = app.exec ();
     Sys.exit (result);
@@ -80,7 +149,7 @@ class MainMenu extends Sprite
 
   private function init():Void
 	{
-		var platform = PathHelper.standardize(Sys.getCwd(), false);
+		var platform = Path.standardize(Sys.getCwd(), false);
 
     var parts = platform.split("/");
     parts = parts.slice(0, parts.length - 3);
@@ -211,9 +280,9 @@ class MenuItem extends Sprite
 
   private function onClick(event:MouseEvent)
   {
-    var path = PathHelper.standardize(Sys.programPath(), false).split("/");
+    var path = Path.standardize(Sys.programPath(), false).split("/");
     var folder = path.slice(0, path.length - 1).join("/");
-    ProcessHelper.runCommand(folder, path.pop(), ['${MainMenu.GAMES_GENERATED}/$game/Export/cppia/$game.cppia']);
+    System.runCommand(folder, path.pop(), ['${MainMenu.GAMES_GENERATED}/$game/Export/cppia/$game.cppia']);
   }
 
   private function onRollOver(event:MouseEvent)

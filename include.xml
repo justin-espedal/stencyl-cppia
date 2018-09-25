@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-   <engine name="StencylCppia" version="1.0" />
-   <classpath name="export" if="cppia" />
+	<engine name="StencylCppia" version="1.0" />
+	<classpath name="export" if="cppia" />
+	<define name="lime-opengl" />
 </project>

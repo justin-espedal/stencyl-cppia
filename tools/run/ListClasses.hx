@@ -3,7 +3,8 @@ package;
 import sys.*;
 import sys.io.*;
 
-import lime.tools.helpers.*;
+import hxp.*;
+import lime.tools.*;
 import lime.project.*;
 
 using Lambda;
@@ -13,7 +14,7 @@ class ListClasses
 {
 	public static function list(haxelib:String, className:String, ?packages:Array<String> = null, ?include:Array<String> = null, ?excludeList:Array<String> = null):String
 	{
-		var librarySource = PathHelper.getHaxelib (new Haxelib (haxelib));
+		var librarySource = Haxelib.getPath (new Haxelib (haxelib));
 		var allFiles = [];
 		
 		if(packages == null)
