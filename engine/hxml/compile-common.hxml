@@ -6,6 +6,7 @@
 -D lime-cairo
 -D lime-cffi
 -D lime-curl
+-D lime-harfbuzz
 -D lime-opengl
 -D lime-openal
 -D lime-vorbis
