@@ -21,7 +21,7 @@ class CppiaPlatform extends PlatformTarget {
 		
 		super (command, _project, targetFlags);
 		
-		targetDirectory = project.app.path + "/cppia";
+		targetDirectory = Path.combine (project.app.path, project.config.getString ("cppia.output-directory", "cppia"));
 		applicationDirectory = targetDirectory;
 		executablePath = applicationDirectory + "/" + project.app.file + ".cppia";
 	}
