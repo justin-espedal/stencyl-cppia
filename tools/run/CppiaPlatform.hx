@@ -35,14 +35,7 @@ class CppiaPlatform extends PlatformTarget {
 			
 			type = "debug";
 			
-		} else if (project.targetFlags.exists ("final")) {
-			
-			type = "final";
-			
 		}
-
-		//XXX: Needs to be debug right now so the output is cppia, and cpp.Object info can be stripped out of it.
-		//type = "debug";
 		
 		var hxml = targetDirectory + "/haxe/" + type + ".hxml";
 		
@@ -59,32 +52,29 @@ class CppiaPlatform extends PlatformTarget {
 			
 		}
 		
-		if (!project.targetFlags.exists ("static"))
+		var platform = System.hostPlatform;
+		var is64 = System.hostArchitecture == HostArchitecture.X64;
+		
+		if(platform == HostPlatform.WINDOWS)
+			is64 = false;
+		
+		var platformID = platform + (is64  ? "64" : "");
+		platformID = platformID.substr(0, 1).toUpperCase() + platformID.substr(1);
+		
+		var libExtension = switch(platform) {
+			case WINDOWS:
+				".dll";
+			case MAC:
+				".dylib";
+			case LINUX:
+				".dso";
+			case _:
+				"";
+		}
+		
+		for (ndll in project.ndlls)
 		{
-			var platform = System.hostPlatform;
-			var is64 = System.hostArchitecture == HostArchitecture.X64;
-			
-			if(platform == HostPlatform.WINDOWS)
-				is64 = false;
-			
-			var platformID = platform + (is64  ? "64" : "");
-			platformID = platformID.substr(0, 1).toUpperCase() + platformID.substr(1);
-			
-			var libExtension = switch(platform) {
-				case WINDOWS:
-					".dll";
-				case MAC:
-					".dylib";
-				case LINUX:
-					".dso";
-				case _:
-					"";
-			}
-			
-			for (ndll in project.ndlls)
-			{
-				ProjectHelper.copyLibrary (project, ndll, platformID, "", (ndll.haxelib != null && (ndll.haxelib.name == "hxcpp" || ndll.haxelib.name == "hxlibc")) ? libExtension : ".ndll", applicationDirectory, project.debug);
-			}
+			ProjectHelper.copyLibrary (project, ndll, platformID, "", (ndll.haxelib != null && (ndll.haxelib.name == "hxcpp" || ndll.haxelib.name == "hxlibc")) ? libExtension : ".ndll", applicationDirectory, project.debug);
 		}
 		
 		var icons = project.icons;
@@ -108,25 +98,7 @@ class CppiaPlatform extends PlatformTarget {
 			
 		}
 		
-		if (!project.targetFlags.exists ("static")) {
-			
-			System.runCommand("", "haxe", haxeArgs);
-
-			//CppiaScriptUtils.removeClass(executablePath, "cpp.Object");
-
-			//Right now we take care of the bad link on the hxcpp side
-			
-			/*
-			linkingClass = classes[i];
-			if(strcmp(linkingClass->name.c_str(),"cpp._Object.Object_Impl_") != 0)
-			  classes[i]->link();
-			*/
-			
-		} else {
-			
-			System.runCommand ("", "haxe", haxeArgs.concat ([ "-D", "static_link" ]));
-
-		}
+		System.runCommand("", "haxe", haxeArgs);
 	}
 	
 	
@@ -153,10 +125,6 @@ class CppiaPlatform extends PlatformTarget {
 		if (project.debug) {
 			
 			type = "debug";
-			
-		} else if (project.targetFlags.exists ("final")) {
-			
-			type = "final";
 			
 		}
 		
@@ -196,16 +164,6 @@ class CppiaPlatform extends PlatformTarget {
 	
 	public override function run ():Void {
 		
-		/*var arguments = additionalArguments.copy ();
-		
-		if (LogHelper.verbose) {
-			
-			arguments.push ("-verbose");
-			
-		}
-		
-		arguments = arguments.concat ([ "-livereload" ]);*/
-		
 		var scriptFolder = Path.combine(projectPath, targetDirectory);
 		var fullScriptPath = Path.combine(projectPath, executablePath);
 
@@ -216,7 +174,7 @@ class CppiaPlatform extends PlatformTarget {
 	
 	public override function update ():Void {
 		
-		project = project.clone ();
+		AssetHelper.processLibraries (project, targetDirectory);
 		
 		if (project.targetFlags.exists ("xml")) {
 			
@@ -224,44 +182,29 @@ class CppiaPlatform extends PlatformTarget {
 			
 		}
 		
-		var context = generateContext ();
-		
-		if (project.targetFlags.exists ("static")) {
-			
-			for (i in 0...project.ndlls.length) {
-				
-				var ndll = project.ndlls[i];
-				
-				if (ndll.path == null || ndll.path == "") {
-					
-					context.ndlls[i].path = NDLL.getLibraryPath (ndll, "Windows", "lib", ".lib", project.debug);
-					
-				}
-				
+		for (asset in project.assets) {
+
+			if (asset.embed && asset.sourcePath == "") {
+
+				var path = Path.combine (targetDirectory + "/obj/tmp", asset.targetPath);
+				System.mkdir (Path.directory (path));
+				AssetHelper.copyAsset (asset, path);
+				asset.sourcePath = path;
+
 			}
-			
+
 		}
 		
+		var context = generateContext ();
+		context.OUTPUT_DIR = targetDirectory;
+
 		System.mkdir (targetDirectory);
 		System.mkdir (targetDirectory + "/haxe");
 		
 		//SWFHelper.generateSWFClasses (project, targetDirectory + "/haxe");
 		
-		System.recursiveCopyTemplate (project.templatePaths, "haxe", targetDirectory + "/haxe", context);
-		System.recursiveCopyTemplate (project.templatePaths, targetType + "/hxml", targetDirectory + "/haxe", context);
-		
-		if (project.targetFlags.exists ("static")) {
-			
-			System.recursiveCopyTemplate (project.templatePaths, "cpp/static", targetDirectory + "/obj", context);
-			
-		}
-		
-		/*if (IconHelper.createIcon (project.icons, 32, 32, Path.combine (applicationDirectory, "icon.png"))) {
-			
-			context.HAS_ICON = true;
-			context.WIN_ICON = "icon.png";
-			
-		}*/
+		ProjectHelper.recursiveSmartCopyTemplate (project, "haxe", targetDirectory + "/haxe", context);
+		ProjectHelper.recursiveSmartCopyTemplate (project, targetType + "/hxml", targetDirectory + "/haxe", context);
 		
 		for (asset in project.assets) {
 			
