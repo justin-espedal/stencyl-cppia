@@ -2,5 +2,4 @@
 <project>
 	<engine name="StencylCppia" version="1.0" />
 	<classpath name="export" if="cppia" />
-	<define name="lime-opengl" />
 </project>
