@@ -140,7 +140,7 @@ class CppiaPlatform extends PlatformTarget {
 		var context = project.templateContext;
 		
 		context.CPP_DIR = targetDirectory + "/" + project.app.file + ".cppia";
-		context.BUILD_DIR = project.app.path + "/cppia";
+		context.BUILD_DIR = targetDirectory;
 
 		var prefix = null;
 
