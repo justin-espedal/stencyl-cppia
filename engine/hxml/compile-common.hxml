@@ -14,6 +14,7 @@
 -D no_console=1
 -D stencyltools
 -D use_tilemap
+-D testing
 -D actuate_manual_time
 -D actuate_manual_update
 
@@ -21,13 +22,13 @@
 -lib lime
 -lib hxp
 -lib hxcpp
--lib actuate
--lib console
+-lib debug-console
 -lib polygonal-ds
 -lib polygonal-printf
 -lib box2d
 -lib cloner
 -lib stencyl
+-lib tweenxcore
 -lib mbs
 
 --remap flash:openfl
