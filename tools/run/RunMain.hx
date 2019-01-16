@@ -71,6 +71,7 @@ class RunMain
 		FileSystem.createDirectory(binFolder);
 
 		var binSuffix = (platform == HostPlatform.WINDOWS ? ".exe" : "");
+		var debugSuffix = debug ? "-debug" : "";
 		var hasBin = FileSystem.exists('$binFolder/StencylCppia$binSuffix');
 
 		CppiaPlatform.hostExecutablePath = '$binFolder/StencylCppia$binSuffix';
@@ -102,13 +103,14 @@ class RunMain
 			if(debug)
 			{
 				haxeArgs = haxeArgs.concat([
-				//	'-D', 'HXCPP_DEBUGGER',
-				//	'-D', 'openfl-debug',
-				//	'-D', 'lime-debug',
-					'-D', 'debug'
+					'-D', 'HXCPP_DEBUGGER',
+					'-D', 'openfl-debug',
+					'-D', 'lime-debug',
+					'-debug',
+					'-D', 'HXCPP_STACK_TRACE',
 				]);
 			}
-
+			
 			var originalHaxeArgs = haxeArgs;
 
 			var exportFolder = '$libraryFolder/export';
@@ -120,7 +122,9 @@ class RunMain
 			]);
 			
 			try { Sys.setCwd ('$libraryFolder/engine/hxml'); } catch (e:Dynamic) {}
+			trace("haxe " + haxeArgs);
 			System.runCommand ("", "haxe", haxeArgs);
+			trace("haxe " + originalHaxeArgs);
 			System.runCommand ("", "haxe", originalHaxeArgs);
 			
 			var srcFolder = '$libraryFolder/engine/src';
@@ -130,7 +134,7 @@ class RunMain
 			System.copyIfNewer('$srcFolder/scripts/MyScripts.hx', '$exportFolder/scripts/MyScripts.hx');
 			System.copyIfNewer('$srcFolder/StencylCppiaScript.hx', '$exportFolder/StencylCppia.hx');
 			
-			var tempBinPath = '$tempFolder/StencylCppia$binSuffix';
+			var tempBinPath = '$tempFolder/StencylCppia$debugSuffix$binSuffix';
 			var binPath = '$binFolder/StencylCppia$binSuffix';
 
 			var limeFolder = Path.standardize(Haxelib.getPath (new Haxelib ("lime")), false);
