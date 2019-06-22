@@ -139,7 +139,7 @@ class RunMain
 
 			var limeFolder = Path.standardize(Haxelib.getPath (new Haxelib ("lime")), false);
 			platformID = basePlatformID.substr(0, 1).toUpperCase() + basePlatformID.substr(1);
-			var ndllPath = '$limeFolder/ndll/$platformID/lime.ndll';
+			var ndllPath = '$limeFolder/lib/$platformID/lime.ndll';
 			var ndllDestPath = '$binFolder/lime.ndll';
 
 			System.copyIfNewer(tempBinPath, binPath);
@@ -168,7 +168,7 @@ class RunMain
 			trace("Cwd: " + Sys.getCwd());
 
 			var project:HXProject = Unserializer.run(File.getContent(serializedProjectPath));
-			project.templatePaths = [ Path.combine (libraryFolder, "templates") ].concat (project.templatePaths);
+			project.templatePaths = project.templatePaths.concat ([ Path.combine (libraryFolder, "templates") ]);
 
 			var builder = new CppiaPlatform(command, project, project.targetFlags);
 			builder.execute(additionalArgs);
