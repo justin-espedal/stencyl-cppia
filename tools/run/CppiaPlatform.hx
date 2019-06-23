@@ -12,7 +12,7 @@ class CppiaPlatform extends PlatformTarget {
 	
 	private var applicationDirectory:String;
 	private var executablePath:String;
-	private var targetType:String = "cppia";
+	private var targetType:String = "stencyl-cppia";
 	
 	public static var hostExecutablePath = "";
 	public static var projectPath = "";
@@ -21,7 +21,7 @@ class CppiaPlatform extends PlatformTarget {
 		
 		super (command, _project, targetFlags);
 		
-		targetDirectory = Path.combine (project.app.path, project.config.getString ("cppia.output-directory", "cppia"));
+		targetDirectory = Path.combine (project.app.path, project.config.getString ("stencyl-cppia.output-directory", "stencyl-cppia"));
 		applicationDirectory = targetDirectory;
 		executablePath = applicationDirectory + "/" + project.app.file + ".cppia";
 	}
