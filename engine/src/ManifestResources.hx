@@ -18,7 +18,6 @@ import sys.FileSystem;
 		preloadLibraryNames = new Array ();
 		
 		var rootPath = StencylCppia.gamePath + "/";
-		Assets.defaultRootPath = "";
 		
 		var data, manifest, library;
 		
