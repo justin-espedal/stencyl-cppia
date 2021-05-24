@@ -22,10 +22,9 @@ class RunMain
 
 		trace(Sys.args());
 
-		//XXX: https://github.com/HaxeFoundation/haxe/issues/5708
-		var thisPath = Sys.executablePath();
-
-		var libraryFolder = Path.standardize(thisPath.substring(0, thisPath.indexOf("run.exe")), false);
+		var thisPath = Sys.programPath();
+		
+		var libraryFolder = Path.standardize(thisPath.substring(0, thisPath.indexOf("run.n")), false);
 		var cppiaFolder = libraryFolder.substring(0, libraryFolder.lastIndexOf("/lib"));
 		
 		trace('cppiaFolder: $cppiaFolder');

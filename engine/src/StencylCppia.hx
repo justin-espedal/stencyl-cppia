@@ -31,22 +31,13 @@ class StencylCppia
 
 		var args = Sys.args();
 
-		if(args.length == 0)
+		if(args.length == 0 || args[0] == null)
 		{
-			MainMenu.main();
+			trace("Usage : Cppia scriptname");
 		}
 		else
 		{
-			var script = args[0];
-
-			if (script==null)
-			{
-				trace("Usage : Cppia scriptname");
-			}
-			else
-			{
-				runScript(script);
-			}
+			runScript(args[0]);
 		}
 	}
 
