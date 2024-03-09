@@ -24,6 +24,58 @@ class CppiaPlatform extends PlatformTarget {
 		targetDirectory = Path.combine (project.app.path, project.config.getString ("stencyl-cppia.output-directory", "stencyl-cppia"));
 		applicationDirectory = targetDirectory;
 		executablePath = applicationDirectory + "/" + project.app.file + ".cppia";
+
+		var defaults = new HXProject();
+
+		defaults.window =
+		{
+			width: 800,
+			height: 600,
+			parameters: "{}",
+			background: 0xFFFFFF,
+			fps: 30,
+			hardware: true,
+			display: 0,
+			resizable: true,
+			borderless: false,
+			orientation: Orientation.AUTO,
+			vsync: false,
+			fullscreen: false,
+			allowHighDPI: false,
+			alwaysOnTop: false,
+			antialiasing: 0,
+			allowShaders: true,
+			requireShaders: false,
+			depthBuffer: true,
+			stencilBuffer: true,
+			colorDepth: 32,
+			maximized: false,
+			minimized: false,
+			hidden: false,
+			title: ""
+		};
+
+		switch (System.hostArchitecture)
+		{
+			case ARMV6: defaults.architectures = [ARMV6];
+			case ARMV7: defaults.architectures = [ARMV7];
+			case X86: defaults.architectures = [X86];
+			case X64: defaults.architectures = [X64];
+			default: defaults.architectures = [];
+		}
+
+		for (i in 1...project.windows.length)
+		{
+			defaults.windows.push(defaults.window);
+		}
+
+		defaults.merge(project);
+		project = defaults;
+
+		for (excludeArchitecture in project.excludeArchitectures)
+		{
+			project.architectures.remove(excludeArchitecture);
+		}
 	}
 	
 	
