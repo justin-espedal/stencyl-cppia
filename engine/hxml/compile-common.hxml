@@ -29,6 +29,7 @@
 -lib cloner
 -lib stencyl
 -lib com.stencyl.gestures
+-lib com.stencyl.label
 -lib tweenxcore
 -lib mbs
 
